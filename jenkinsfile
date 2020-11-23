@@ -1,28 +1,13 @@
-pipeline {
-   agent any
-   environment { 
-     Name = "test"
-   }
-    stages {
-         stage('Cloning Git') {
-           steps {
-              git "https://github.com/mendelor/new-repo.git"
-           }
-         }
-
-     stage('Build image') {
-       when {
-         branch 'worker'
-       }
-       steps {
-         script { 
-               myapp = docker.build("${Name}:${env.BUILD_ID}")     
-         }
-        } 
-        post{
-            success{
-                echo "Successfully deployed to Production"
-            }     
-      }
-    }
-  }
+node {
+        if(env.BRANCH_NAME == 'master'){
+			stage('Build Master') {
+                echo 'Building master'
+            }
+        }
+		
+		if(env.BRANCH_NAME == 'worker'){
+			stage('Build Dev') {            
+                echo 'Building dev'
+            }
+        }
+}
